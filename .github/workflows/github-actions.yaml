@@ -9,7 +9,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Check Laravel tests
-        uses: php artisan test
+        uses: vendor/bin/phpunit
 
 #      - name: Start Docker Compose
 #        uses: docker compose up -d

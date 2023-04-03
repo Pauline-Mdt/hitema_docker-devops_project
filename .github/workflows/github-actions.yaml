@@ -8,9 +8,9 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
 
+      - name: Start Docker Compose
+        uses: docker compose up -d
+
       - name: Check Laravel tests
         uses: vendor/bin/phpunit
-
-#      - name: Start Docker Compose
-#        uses: docker compose up -d
 

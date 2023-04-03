@@ -1,0 +1,10 @@
+FROM mysql:latest
+
+ENV MYSQL_ROOT_PASSWORD=secretpwd@r00t
+ENV MYSQL_DATABASE=les-gorgones
+ENV MYSQL_USER=admin_lg_2023
+ENV MYSQL_PASSWORD=pv65N86An5PraY
+
+COPY db-data/les-gorgones.sql /docker-entrypoint-initdb.d/
+
+EXPOSE 3306

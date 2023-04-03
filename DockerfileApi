@@ -1,0 +1,19 @@
+FROM php:8.0
+
+RUN apt update
+RUN apt install -y default-mysql-client
+RUN docker-php-ext-install pdo pdo_mysql
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /api
+COPY api/ .
+
+ENV APP_ENV=staging
+
+RUN composer install --optimize-autoloader --no-dev --ignore-platform-reqs
+RUN php artisan key:generate
+
+EXPOSE 8000
+
+ENTRYPOINT ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]

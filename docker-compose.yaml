@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  db:
+    build:
+      context: .
+      dockerfile: DockerfileDb
+
+  laravel_api:
+    build:
+      context: .
+      dockerfile: DockerfileApi
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db

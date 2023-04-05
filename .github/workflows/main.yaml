@@ -1,5 +1,5 @@
 name: GitHub Actions
-run-name: ${{ github.actor }} ${{ github.event_name }} on ${{ inputs.deploy_target }}
+run-name: ${{ github.actor }} ${{ github.event_name }} on ${{ github.head_ref }} || ${{ github.ref_name }}
 
 on:
   push:
@@ -8,9 +8,13 @@ on:
     branches: [ "master" ]
 
 jobs:
-  laravel-tests:
+  Laravel tests:
 
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: api
 
     steps:
       - name: Check out repository code

@@ -33,10 +33,12 @@ jobs:
         run: php artisan key:generate
 
       - name: Start server
-        run: php artisan serve
+        run: |
+          php artisan serve
+          php artisan test
 
-      - name: Execute tests (Unit and Feature tests) via PHPUnit
+#      - name: Execute tests (Unit and Feature tests) via PHPUnit
 #        env:
 #          DB_CONNECTION: sqlite
 #          DB_DATABASE: database/database.sqlite
-        run: vendor/bin/phpunit
+#        run: vendor/bin/phpunit

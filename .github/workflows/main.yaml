@@ -32,8 +32,8 @@ jobs:
       - name: Generate key
         run: php artisan key:generate
 
-#      - name: Start server
-#        run: php artisan serve
+      - name: Start server
+        run: php artisan serve
 
       - name: Execute tests (Unit and Feature tests) via PHPUnit
 #        env:

@@ -4,12 +4,19 @@ services:
     build:
       context: .
       dockerfile: DockerfileDb
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=secretpwd@r00t
+#      - MYSQL_DATABASE=${DB_DATABASE}
+#      - MYSQL_USER=${DB_USERNAME}
+#      - MYSQL_PASSWORD=${DB_PASSWORD}
+#    env_file:
+#      - ./api/.env.production
 
   laravel_api:
     build:
       context: .
       dockerfile: DockerfileApi
     ports:
-      - "8000:8000"
+      - "8000:80"
     depends_on:
       - db

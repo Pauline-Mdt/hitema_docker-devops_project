@@ -30,7 +30,7 @@ COPY ./api/.env.production .env
 #ENV APP_ENV=production
 
 # Set config for Composer
-ENV COMPOSER_ALLOW_SUPERUSER=1
+RUN export COMPOSER_ALLOW_SUPERUSER=1
 
 # Install dependencies and give rights to apache user
 RUN composer install --optimize-autoloader --no-dev

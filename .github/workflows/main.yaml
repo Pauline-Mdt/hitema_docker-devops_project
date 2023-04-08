@@ -3,9 +3,9 @@ run-name: ${{ github.actor }} ${{ github.event_name }} on ${{ github.head_ref ||
 
 on:
   push:
-    branches: [ "master" ]
+    branches: master
   pull_request:
-    branches: [ "master" ]
+    branches: master
 
 jobs:
   test:

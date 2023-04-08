@@ -45,12 +45,13 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    env:
-      COMPOSER_ALLOW_SUPERUSER: 1
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Allow-plugins in composer config
+        run: export COMPOSER_ALLOW_SUPERUSER=1
+#        working-directory: api
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2

@@ -51,8 +51,8 @@ jobs:
 
       - name: Install git and zip for build
         run: |
-          sudo apt update
-          sudo apt install -y git zip
+          sudo apt-get update
+          sudo apt-get install -y git zip
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2

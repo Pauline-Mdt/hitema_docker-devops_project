@@ -29,7 +29,10 @@ COPY ./api/.env.production .env
 
 #ENV APP_ENV=production
 
-# Install dependencies
+# Set config for Composer
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
+# Install dependencies and give rights to apache user
 RUN composer install --optimize-autoloader --no-dev
 RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 755 /var/www/html

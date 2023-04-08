@@ -30,7 +30,7 @@ COPY ./api/.env.production .env
 #ENV APP_ENV=production
 
 # Install dependencies
-RUN composer install --optimize-autoloader --no-dev --no-scripts --prefer-dist --no-interaction
+RUN composer install --optimize-autoloader --no-dev
 RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 755 /var/www/html
 RUN a2enmod rewrite

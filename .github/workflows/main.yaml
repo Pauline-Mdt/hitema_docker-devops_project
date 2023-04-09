@@ -99,8 +99,8 @@ jobs:
         run: |
           ip=$(terraform output vm_public_ip_address)
           username=$(terraform output vm_username)
-          echo "::set-env name=AZURE_RM_PUBLIC_IP::$ip"
-          echo "::set-env name=AZURE_RM_USERNAME::$username"
+          echo "AZURE_RM_PUBLIC_IP=$ip" >> $GITHUB_ENV
+          echo "AZURE_RM_USERNAME=$username" >> $GITHUB_ENV
 
       - name: Install Ansible
         run: |

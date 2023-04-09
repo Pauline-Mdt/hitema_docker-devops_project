@@ -65,3 +65,107 @@ jobs:
           file: ./DockerfileLaravel
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/docker-base-laravel_php8.1-apache:latest
+
+  vm:
+
+    name: Build the VM on Azure
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: terraform
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name:
+        run: az login -u ${{ secrets.ARM_USERNAME }} -p ${{ secrets.ARM_PASSWORD }}
+        working-directory: ./terraform
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        working-directory: ./terraform
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./terraform
+
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: ./terraform
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: ./terraform
+
+      - name: Set Azure public IP address as GitHub Secret
+        run: |
+          ip=$(terraform output vm_public_ip_address)
+          username=$(terraform output vm_username)
+          echo "::set-env name=VM_PUBLIC_IP::$ip"
+          echo "::set-env name=VM_USERNAME::$username"
+
+      - name: Install Ansible
+        run: |
+          sudo apt update
+          sudo apt install -y ansible
+
+#      - name: Append IP address to inventory file
+#        run: echo "${{ secrets.AZURE_RM_PUBLIC_IP }}" >> inventory
+#
+#      - name: Add VM to inventory
+#        lineinfile:
+#          path: /path/to/inventory/file
+#          line: '{{ inventory_hostname }} ansible_host={{ VM_PUBLIC_IP }}'
+#
+#      - name: Write inventory file
+#        lineinfile:
+#          path: /path/to/inventory_file
+#          line: "my_vm ansible_host={{  }} ansible_user=my_vm_user"
+
+      - name: Add VM to inventory
+        vars:
+          host: lg_vm
+          ip_address: '{{ secrets.VM_PUBLIC_IP }}'
+          username: '{{ secrets.VM_USERNAME }}'
+        lineinfile:
+          dest: ./ansible/inventory
+          line: '{{ host }} ansible_host={{ ip_address }} ansible_user={{ username }}'
+          state: present
+
+      - name: Install Docker on VM
+        run: ansible-playbook -i inventory -u ${{ env.VM_ADMIN_USERNAME }} playbook_install_docker.yaml
+        working-directory: ./ansible
+
+  deploy:
+
+    name: Deploy on the VM
+
+    needs: [test, build-and-push, vm]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Ansible
+        run: |
+          sudo apt update
+          sudo apt install -y ansible
+
+      - name: Add VM to inventory
+        vars:
+          host: lg_vm
+          ip_address: '{{ secrets.VM_PUBLIC_IP }}'
+          username: '{{ secrets.VM_USERNAME }}'
+        lineinfile:
+          dest: ./ansible/inventory
+          line: '{{ host }} ansible_host={{ ip_address }} ansible_user={{ username }}'
+          state: present
+
+      - name: Install Docker on VM
+        run: ansible-playbook -i inventory -u ${{ env.VM_ADMIN_USERNAME }} playbook_install_docker.yaml
+        working-directory: ./ansible

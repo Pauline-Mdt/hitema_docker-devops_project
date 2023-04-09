@@ -1,0 +1,19 @@
+---
+- hosts: all
+  tasks:
+    - name: Installer Git
+      become: true
+      apt:
+        name: git
+        state: present
+
+    - name: Cloner un repository Git public
+      become: true
+      git:
+        repo: https://github.com/Pauline-Mdt/hitema_docker-devops_project
+        dest: /home/adminuser/app
+
+    - name: Build and run docker-compose
+      shell: |
+        cd /home/adminuser/app
+        docker-compose up -d

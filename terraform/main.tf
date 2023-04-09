@@ -16,13 +16,13 @@ provider "azurerm" {
 
 # Create a resource group
 resource "azurerm_resource_group" "main" {
-  name     = "${var.prefix}_resources"
+  name     = "${var.prefix}-resources"
   location = var.location
 }
 
 # Create a virtual network
 resource "azurerm_virtual_network" "main" {
-  name                = "${var.prefix}_network"
+  name                = "${var.prefix}-network"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   address_space       = ["10.0.0.0/16"]
@@ -60,7 +60,7 @@ resource "azurerm_subnet" "internal" {
 }
 
 resource "azurerm_network_interface" "main" {
-  name                = "${var.prefix}_nic"
+  name                = "${var.prefix}-nic"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
 
@@ -73,7 +73,7 @@ resource "azurerm_network_interface" "main" {
 }
 
 resource "azurerm_linux_virtual_machine" "main" {
-  name                = "${var.prefix}_vm"
+  name                = "${var.prefix}-vm"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   size                = "Standard_B1s"

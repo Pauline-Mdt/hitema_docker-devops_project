@@ -36,7 +36,7 @@ resource "azurerm_ssh_public_key" "main" {
   name                = "main"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
-  public_key          = file(var.ssh_public_key)
+  public_key          = var.ssh_public_key
 }
 
 # Create a public ip address
@@ -84,7 +84,7 @@ resource "azurerm_linux_virtual_machine" "main" {
 
   admin_ssh_key {
     username   = var.admin_username
-    public_key = file(var.ssh_public_key)
+    public_key = var.ssh_public_key
   }
 
   os_disk {

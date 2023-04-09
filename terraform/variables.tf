@@ -13,12 +13,11 @@ variable "environnement" {
   default = "Production"
 }
 
-variable "path_to_ssh_key" {
-  type = string
-  default = "~/.ssh/id_rsa.pub"
-}
-
 variable "admin_username" {
   type = string
   default = "adminuser"
+}
+
+variable "ssh_public_key" {
+  type = string
 }

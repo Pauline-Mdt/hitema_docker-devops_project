@@ -82,23 +82,23 @@ jobs:
 
       - name: Login to Azure
         run: az login -u ${{ secrets.AZURE_RM_USERNAME }} -p ${{ secrets.AZURE_RM_PASSWORD }}
-#        working-directory: ./terraform
+#        working-directory: terraform
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
-        working-directory: ./terraform
+        working-directory: terraform
 
       - name: Terraform Init
         run: terraform init
-        working-directory: ./terraform
+        working-directory: terraform
 
       - name: Terraform Plan
         run: terraform plan
-        working-directory: ./terraform
+        working-directory: terraform
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
-        working-directory: ./terraform
+        working-directory: terraform
 
       - name: Set Azure public IP address as GitHub Secret
         run: |
@@ -133,7 +133,7 @@ jobs:
 
       - name: Install Docker on VM
         run: ansible-playbook -i inventory -u ${{ env.AZURE_RM_USERNAME }} playbook_install_docker.yaml
-        working-directory: ./ansible
+        working-directory: ansible
 
   deploy:
 
@@ -149,7 +149,7 @@ jobs:
 
       - name: Login to Azure
         run: az login -u ${{ secrets.AZURE_RM_USERNAME }} -p ${{ secrets.AZURE_RM_PASSWORD }}
-        working-directory: ./ansible
+        working-directory: ansible
 
       - name: Install Ansible
         run: |
@@ -164,4 +164,4 @@ jobs:
 
       - name: Install Docker on VM
         run: ansible-playbook -i inventory -u ${{ env.AZURE_RM_USERNAME }} playbook_install_docker.yaml
-        working-directory: ./ansible
+        working-directory: ansible

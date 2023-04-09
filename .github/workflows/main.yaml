@@ -81,7 +81,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Login to Azure
-        run: az login -u ${{ secrets.ARM_USERNAME }} -p ${{ secrets.ARM_PASSWORD }}
+        run: az login -u ${{ secrets.AZURE_RM_USERNAME }} -p ${{ secrets.AZURE_RM_PASSWORD }}
 #        working-directory: ./terraform
 
       - name: Setup Terraform
@@ -104,8 +104,8 @@ jobs:
         run: |
           ip=$(terraform output vm_public_ip_address)
           username=$(terraform output vm_username)
-          echo "::set-env name=VM_PUBLIC_IP::$ip"
-          echo "::set-env name=VM_USERNAME::$username"
+          echo "::set-env name=AZURE_RM_PUBLIC_IP::$ip"
+          echo "::set-env name=AZURE_RM_USERNAME::$username"
 
       - name: Install Ansible
         run: |
@@ -125,18 +125,14 @@ jobs:
 #          path: /path/to/inventory_file
 #          line: "my_vm ansible_host={{  }} ansible_user=my_vm_user"
 
-      - name: Add VM to inventory
-        vars:
-          host: lg_vm
-          ip_address: '{{ secrets.VM_PUBLIC_IP }}'
-          username: '{{ secrets.VM_USERNAME }}'
-        lineinfile:
-          dest: ./ansible/inventory
-          line: '{{ host }} ansible_host={{ ip_address }} ansible_user={{ username }}'
-          state: present
+      - name: Set up Ansible inventory
+        run: |
+          mkdir -p ./ansible/inventory
+          echo "[vm]" > ./ansible/inventory/hosts
+          echo "lg_vm ansible_host=${{ secrets.AZURE_RM_PUBLIC_IP }} ansible_user=${{ secrets.AZURE_RM_USERNAME }}" >> ./ansible/inventory/hosts
 
       - name: Install Docker on VM
-        run: ansible-playbook -i inventory -u ${{ env.VM_ADMIN_USERNAME }} playbook_install_docker.yaml
+        run: ansible-playbook -i inventory -u ${{ env.AZURE_RM_USERNAME }} playbook_install_docker.yaml
         working-directory: ./ansible
 
   deploy:
@@ -152,7 +148,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Login to Azure
-        run: az login -u ${{ secrets.ARM_USERNAME }} -p ${{ secrets.ARM_PASSWORD }}
+        run: az login -u ${{ secrets.AZURE_RM_USERNAME }} -p ${{ secrets.AZURE_RM_PASSWORD }}
         working-directory: ./ansible
 
       - name: Install Ansible
@@ -160,16 +156,12 @@ jobs:
           sudo apt update
           sudo apt install -y ansible
 
-      - name: Add VM to inventory
-        vars:
-          host: lg_vm
-          ip_address: '{{ secrets.VM_PUBLIC_IP }}'
-          username: '{{ secrets.VM_USERNAME }}'
-        lineinfile:
-          dest: ./ansible/inventory
-          line: '{{ host }} ansible_host={{ ip_address }} ansible_user={{ username }}'
-          state: present
+      - name: Set up Ansible inventory
+        run: |
+          mkdir -p ./ansible/inventory
+          echo "[vm]" > ./ansible/inventory/hosts
+          echo "lg_vm ansible_host=${{ secrets.AZURE_RM_PUBLIC_IP }} ansible_user=${{ secrets.AZURE_RM_USERNAME }}" >> ./ansible/inventory/hosts
 
       - name: Install Docker on VM
-        run: ansible-playbook -i inventory -u ${{ env.VM_ADMIN_USERNAME }} playbook_install_docker.yaml
+        run: ansible-playbook -i inventory -u ${{ env.AZURE_RM_USERNAME }} playbook_install_docker.yaml
         working-directory: ./ansible

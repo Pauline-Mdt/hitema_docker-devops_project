@@ -16,6 +16,3 @@
       apt:
         name: docker-compose
         state: present
-
-    - name: Run hello-world container
-      command: sudo docker run hello-world

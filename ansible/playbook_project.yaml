@@ -1,6 +1,11 @@
 ---
 - hosts: all
   tasks:
+    - name: Update apt cache
+      become: true
+      apt:
+        update_cache: yes
+
     - name: Installer Git
       become: true
       apt:
@@ -8,7 +13,6 @@
         state: present
 
     - name: Cloner un repository Git public
-      become: true
       git:
         repo: https://github.com/Pauline-Mdt/hitema_docker-devops_project
         dest: /home/adminuser/app

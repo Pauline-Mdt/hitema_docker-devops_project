@@ -82,7 +82,6 @@ jobs:
 
       - name: Login to Azure
         run: az login -u ${{ secrets.AZURE_RM_USERNAME }} -p ${{ secrets.AZURE_RM_PASSWORD }}
-#        working-directory: terraform
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2

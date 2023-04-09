@@ -80,9 +80,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name:
+      - name: Login to Azure
         run: az login -u ${{ secrets.ARM_USERNAME }} -p ${{ secrets.ARM_PASSWORD }}
-        working-directory: ./terraform
+#        working-directory: ./terraform
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -150,6 +150,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Login to Azure
+        run: az login -u ${{ secrets.ARM_USERNAME }} -p ${{ secrets.ARM_PASSWORD }}
+        working-directory: ./ansible
 
       - name: Install Ansible
         run: |

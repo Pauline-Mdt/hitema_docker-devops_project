@@ -97,8 +97,8 @@ jobs:
 
       - name: Set Azure public IP address as GitHub Secret
         run: |
-          ip=$(terraform output vm_public_ip_address)
-          username=$(terraform output vm_username)
+          ip=$(terraform output vm_public_ip_address | sed 's/"//g')
+          username=$(terraform output vm_username | sed 's/"//g')
           echo "AZURE_RM_PUBLIC_IP=$ip" >> $GITHUB_ENV
           echo "AZURE_RM_USERNAME=$username" >> $GITHUB_ENV
 

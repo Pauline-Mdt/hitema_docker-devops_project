@@ -160,3 +160,4 @@ jobs:
       - name: Install Docker on VM
         run: ansible-playbook -i inventory -u ${{ env.AZURE_RM_USERNAME }} playbook_install_docker.yaml
         working-directory: ansible
+

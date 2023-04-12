@@ -41,7 +41,7 @@ resource "azurerm_ssh_public_key" "main" {
 
 # Create a public ip address
 resource "azurerm_public_ip" "pip" {
-  name                = "acceptanceTestPublicIp1"
+  name                = "${var.prefix}-pip"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   allocation_method   = "Static"

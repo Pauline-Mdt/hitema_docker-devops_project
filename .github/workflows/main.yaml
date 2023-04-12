@@ -95,6 +95,41 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -var 'ssh_public_key=${{ secrets.SSH_PUBLIC_KEY }}' -auto-approve
 
+      - name: List files
+        run: ls -la
+
+      - name: Show different files
+        run: |
+          git diff
+          git status
+          
+      - uses: EndBug/add-and-commit@v9 # You can change this to use a specific version.
+        with:
+          add: 'terraform.tfstate
+
+          # The name of the custom committer you want to use, if different from the author of the commit.
+          # Default: the name of the author (set with either author_name or default_author)
+#          committer_name: Committer Name
+
+          # The local path to the directory where your repository is located. You should use actions/checkout first to set it up.
+          # Default: '.'
+#          cwd: './path/to/the/repo'
+
+          default_author: github_actions
+
+          # Arguments for the git fetch command. If set to false, the action won't fetch the repo.
+          # For more info as to why fetching is usually recommended, please see the "Performance on large repos" FAQ.
+          # Default: --tags --force
+#          fetch: false
+
+          # The message for the commit.
+          # Default: 'Commit from GitHub Actions (name of the workflow)'
+          message: 'Commit from GitHub Actions - Update terraform.tfstate file'
+
+          # Whether to push the commit and, if any, its tags to the repo. It can also be used to set the git push arguments (see the paragraph below for more info)
+          # Default: true
+#          push: false
+
       - name: Set Azure public IP address as GitHub Secret
         run: |
           ip=$(terraform output vm_public_ip_address | sed 's/"//g')

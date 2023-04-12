@@ -12,6 +12,8 @@ jobs:
 
     name: Laravel tests
 
+    if: github.actor != 'github-actions[bot]'
+
     runs-on: ubuntu-latest
 
     defaults:
@@ -70,6 +72,8 @@ jobs:
 
     name: Build the VM on Azure
 
+    if: github.actor != 'github-actions[bot]'
+
     runs-on: ubuntu-latest
 
     defaults:
@@ -80,7 +84,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.WORKFLOW_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Login to Azure
         run: az login -u ${{ secrets.AZURE_RM_USERNAME }} -p ${{ secrets.AZURE_RM_PASSWORD }}
@@ -91,11 +95,23 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
+      - name: Terraform Init
+        run: terraform validate
+
       - name: Terraform Plan
         run: terraform plan -var 'ssh_public_key=${{ secrets.SSH_PUBLIC_KEY }}'
 
       - name: Terraform Apply
         run: terraform apply -var 'ssh_public_key=${{ secrets.SSH_PUBLIC_KEY }}' -auto-approve
+
+      - name: Set Azure public IP address as GitHub Secret
+        run: |
+          echo $(terraform output vm_public_ip_address)
+          echo $(terraform output vm_username)
+      #          ip=$(terraform output vm_public_ip_address | sed 's/"//g')
+      #          username=$(terraform output vm_username | sed 's/"//g')
+      #          echo "AZURE_RM_PUBLIC_IP=$ip" >> $GITHUB_ENV
+      #          echo "AZURE_RM_USERNAME=$username" >> $GITHUB_ENV
 
       - name: List files
         run: ls -la
@@ -132,15 +148,6 @@ jobs:
           # Default: true
 #          push: false
 
-      - name: Set Azure public IP address as GitHub Secret
-        run: |
-          echo $(terraform output vm_public_ip_address)
-          echo $(terraform output vm_username)
-#          ip=$(terraform output vm_public_ip_address | sed 's/"//g')
-#          username=$(terraform output vm_username | sed 's/"//g')
-#          echo "AZURE_RM_PUBLIC_IP=$ip" >> $GITHUB_ENV
-#          echo "AZURE_RM_USERNAME=$username" >> $GITHUB_ENV
-
       - name: Install Ansible
         run: |
           sudo apt update
@@ -166,15 +173,17 @@ jobs:
 #          line: "my_vm ansible_host={{  }} ansible_user=my_vm_user"
 
       - name: Set up Ansible inventory
-        run: echo "lg_vm ansible_host=$(terraform output vm_public_ip_address) ansible_user=$(terraform output vm_username)" > ../ansible/inventory
+        run: echo "lg_vm ansible_host=${{ secrets.AZURE_RM_PUBLIC_IP }} ansible_user=${{ secrets.AZURE_RM_USERNAME }}" > ../ansible/inventory
 
       - name: Install Docker on VM
-        run: ansible-playbook -i inventory -u ${{ env.AZURE_RM_USERNAME }} playbook_install_docker.yaml
+        run: ansible-playbook -i inventory playbook_install_docker.yaml
         working-directory: ansible
 
   deploy:
 
     name: Deploy on the VM
+
+    if: github.actor != 'github-actions[bot]'
 
     needs: [test, build-and-push, vm]
 

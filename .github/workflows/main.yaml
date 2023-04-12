@@ -105,7 +105,7 @@ jobs:
           
       - uses: EndBug/add-and-commit@v9 # You can change this to use a specific version.
         with:
-          add: 'terraform.tfstate
+          add: 'terraform.tfstate'
 
           # The name of the custom committer you want to use, if different from the author of the commit.
           # Default: the name of the author (set with either author_name or default_author)

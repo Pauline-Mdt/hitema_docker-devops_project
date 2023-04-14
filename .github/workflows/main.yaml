@@ -86,12 +86,12 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: pwd
-
       - name: List files
-        run: ls -la
+        run: ls -la ~/
 
       - run: ssh-keygen -lf /etc/ssh/ssh_host_rsa_key.pub
+
+      - run: mkdir -p ~/.ssh
 
       - run: touch ~/.ssh/known_hosts
 

@@ -90,12 +90,14 @@ jobs:
 
       - run: mkdir -p ~/.ssh
 
+      - run : echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+
       - run: touch ~/.ssh/known_hosts
 
       - run: cat ~/.ssh/known_hosts
 
       - name: List files
-        run: ls -la ~/
+        run: ls -la ~/.ssh
 
       - name: Login to Azure
         run: az login -u ${{ secrets.AZURE_RM_USERNAME }} -p ${{ secrets.AZURE_RM_PASSWORD }}
@@ -154,7 +156,7 @@ jobs:
         working-directory: ansible
 
       - name: Install Docker on VM
-        run: ansible-playbook -i inventory playbook_install_docker.yaml --private-key ansible_key.pem
+        run: ansible-playbook -i inventory playbook_install_docker.yaml
         working-directory: ansible
 
   deploy:

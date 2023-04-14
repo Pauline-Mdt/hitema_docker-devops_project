@@ -110,12 +110,12 @@ jobs:
         run: |
           ip=$(terraform output vm_public_ip_address)
           username=$(terraform output vm_username)
-#                    echo $(terraform output vm_public_ip_address)
-#                    echo $(terraform output vm_username)
+          echo $ip
+          echo $username
           echo "AZURE_RM_PUBLIC_IP=$ip" >> $GITHUB_ENV
           echo "AZURE_RM_USERNAME=$username" >> $GITHUB_ENV
-          echo "lg_vm ansible_host=$(terraform output vm_public_ip_address) ansible_user=$(terraform output vm_username)"
-          echo "lg_vm ansible_host=$(terraform output vm_public_ip_address) ansible_user=$(terraform output vm_username)" > ../ansible/inventory
+#          echo "lg_vm ansible_host=$(terraform output vm_public_ip_address) ansible_user=$(terraform output vm_username)"
+#          echo "lg_vm ansible_host=$(terraform output vm_public_ip_address) ansible_user=$(terraform output vm_username)" > ../ansible/inventory
 
       - name: List files
         run: ls -la

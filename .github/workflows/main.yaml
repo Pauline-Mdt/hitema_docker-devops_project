@@ -111,8 +111,8 @@ jobs:
           echo $ip
           echo $username
           echo "hitema_docker-devops_vm ansible_host=$ip ansible_user=$username"
-          echo "hitema_docker-devops_vm ansible_host=$ip ansible_user=$username" | sed 's/"//g'
-          echo "hitema_docker-devops_vm ansible_host=$ip ansible_user=$username" | sed 's/"//g' > ../ansible/inventory
+          echo "hitema_docker-devops_vm ansible_host=$ip ansible_user=$username" | tr -d '"'
+          echo "hitema_docker-devops_vm ansible_host=$ip ansible_user=$username" | tr -d '"' > ../ansible/inventory
 
       - name: Git diff
         run: git diff
@@ -133,7 +133,7 @@ jobs:
           sudo apt install -y ansible
 
       - name: Install Docker on VM
-        run: ansible-playbook -i inventory playbook_install_docker.yaml --identity-file ${{ secrets.SSH_PUBLIC_KEY }}
+        run: ansible-playbook -i inventory playbook_install_docker.yaml --private-key ${{ secrets.SSH_PRIVATE_KEY }}
         working-directory: ansible
 
   deploy:

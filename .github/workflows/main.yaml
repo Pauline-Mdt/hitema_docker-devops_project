@@ -91,6 +91,8 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
 
       - name: Terraform Init
         run: terraform init
@@ -103,16 +105,17 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -var 'ssh_public_key=${{ secrets.SSH_PUBLIC_KEY }}' -auto-approve
+
       - name: Set Azure public IP address as GitHub Secret
         run: |
 #          echo $(terraform output vm_public_ip_address)
 #          echo $(terraform output vm_username)
-          ip=$(terraform-bin output vm_public_ip_address)
-          username=$(terraform-bin output vm_username)
+          ip=$(terraform output vm_public_ip_address)
+          username=$(terraform output vm_username)
           echo "AZURE_RM_PUBLIC_IP=$ip" >> $GITHUB_ENV
           echo "AZURE_RM_USERNAME=$username" >> $GITHUB_ENV
-          echo "lg_vm ansible_host=$(terraform-bin output vm_public_ip_address) ansible_user=$(terraform-bin output vm_username)"
-          echo "lg_vm ansible_host=$(terraform-bin output vm_public_ip_address) ansible_user=$(terraform-bin output vm_username)" > ../ansible/inventory
+          echo "lg_vm ansible_host=$(terraform output vm_public_ip_address) ansible_user=$(terraform output vm_username)"
+          echo "lg_vm ansible_host=$(terraform output vm_public_ip_address) ansible_user=$(terraform output vm_username)" > ../ansible/inventory
 
       - name: List files
         run: ls -la

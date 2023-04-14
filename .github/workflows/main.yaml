@@ -112,8 +112,9 @@ jobs:
           echo $username
           echo "AZURE_RM_PUBLIC_IP=$ip" >> $GITHUB_ENV
           echo "AZURE_RM_USERNAME=$username" >> $GITHUB_ENV
-          echo "lg_vm ansible_host=$(terraform-bin output vm_public_ip_address) ansible_user=$(terraform-bin output vm_username)"
-          echo "lg_vm ansible_host=$(terraform-bin output vm_public_ip_address) ansible_user=$(terraform-bin output vm_username)" > ../ansible/inventory
+          echo "${{ env.AZURE_RM_PUBLIC_IP }}"
+          echo "lg_vm ansible_host=${{ secrets.AZURE_RM_PUBLIC_IP }} ansible_user=${{ secrets.AZURE_RM_USERNAME }}"
+          echo "hitema_docker-devops_vm ansible_host=${{ secrets.AZURE_RM_PUBLIC_IP }} ansible_user=${{ secrets.AZURE_RM_USERNAME }}" > ../ansible/inventory
 
       - name: List files
         run: ls -la
@@ -123,31 +124,17 @@ jobs:
           git diff
           git status
           
-      - name: Commit and push Terraform files
+      - name: Commit and push updated files
         uses: EndBug/add-and-commit@v9
         with:
-          add: './terraform/.terraform.lock.hcl ./terraform/terraform.tfstate'
+          add: './terraform/.terraform.lock.hcl ./terraform/terraform.tfstate ../ansible/inventory'
           default_author: github_actions
-          message: 'GitHub Actions - Update terraform.tfstate file'
+          message: 'GitHub Actions - Update Terraform and Ansible files'
 
       - name: Install Ansible
         run: |
           sudo apt update
           sudo apt install -y ansible
-
-      - name: List files
-        run: ls -la
-
-      - name: List files
-        run: ls -la ../ansible
-
-      - name: Set up Ansible inventory
-        run: echo "hitema_docker-devops_vm ansible_host=${{ secrets.AZURE_RM_PUBLIC_IP }} ansible_user=${{ secrets.AZURE_RM_USERNAME }}" > ../ansible/inventory
-
-      - name: Show different files
-        run: |
-          git diff
-          git status
 
       - name: Install Docker on VM
         run: ansible-playbook -i inventory playbook_install_docker.yaml

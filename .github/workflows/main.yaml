@@ -108,10 +108,10 @@ jobs:
 
       - name: Set Azure public IP address as GitHub Secret
         run: |
-#          echo $(terraform output vm_public_ip_address)
-#          echo $(terraform output vm_username)
           ip=$(terraform output vm_public_ip_address)
           username=$(terraform output vm_username)
+#                    echo $(terraform output vm_public_ip_address)
+#                    echo $(terraform output vm_username)
           echo "AZURE_RM_PUBLIC_IP=$ip" >> $GITHUB_ENV
           echo "AZURE_RM_USERNAME=$username" >> $GITHUB_ENV
           echo "lg_vm ansible_host=$(terraform output vm_public_ip_address) ansible_user=$(terraform output vm_username)"

@@ -137,6 +137,12 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ansible_key.pem
           chmod 600 ansible_key.pem
 
+      - name: List files
+        run: ls -la
+
+      - name: Show key
+        run: cat ansible_key.pem
+
       - name: Install Docker on VM
         run: ansible-playbook -i inventory playbook_install_docker.yaml --private-key ansible_key.pem
         working-directory: ansible

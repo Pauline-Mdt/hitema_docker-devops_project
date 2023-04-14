@@ -108,6 +108,8 @@ jobs:
         run: |
           echo $(terraform output vm_public_ip_address)
           echo $(terraform output vm_username)
+          echo "lg_vm ansible_host=$(terraform output vm_public_ip_address) ansible_user=$(terraform output vm_username)"
+          echo "lg_vm ansible_host=$(terraform output vm_public_ip_address) ansible_user=$(terraform output vm_username)" > ../ansible/inventory
       #          ip=$(terraform output vm_public_ip_address | sed 's/"//g')
       #          username=$(terraform output vm_username | sed 's/"//g')
       #          echo "AZURE_RM_PUBLIC_IP=$ip" >> $GITHUB_ENV
@@ -121,9 +123,9 @@ jobs:
           git diff
           git status
           
-      - uses: EndBug/add-and-commit@v9 # You can change this to use a specific version.
+      - uses: Commit and push Terraform files
         with:
-          add: './terraform/terraform.tfstate'
+          add: './terraform/.terraform.lock.hcl ./terraform/terraform.tfstate'
 
           # The name of the custom committer you want to use, if different from the author of the commit.
           # Default: the name of the author (set with either author_name or default_author)
@@ -173,7 +175,12 @@ jobs:
 #          line: "my_vm ansible_host={{  }} ansible_user=my_vm_user"
 
       - name: Set up Ansible inventory
-        run: echo "lg_vm ansible_host=${{ secrets.AZURE_RM_PUBLIC_IP }} ansible_user=${{ secrets.AZURE_RM_USERNAME }}" > ../ansible/inventory
+        run: echo "hitema_docker-devops_vm ansible_host=${{ secrets.AZURE_RM_PUBLIC_IP }} ansible_user=${{ secrets.AZURE_RM_USERNAME }}" > ../ansible/inventory
+
+      - name: Show different files
+        run: |
+          git diff
+          git status
 
       - name: Install Docker on VM
         run: ansible-playbook -i inventory playbook_install_docker.yaml

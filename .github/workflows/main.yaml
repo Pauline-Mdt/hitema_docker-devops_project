@@ -88,6 +88,8 @@ jobs:
 
       - run: ssh-keygen -lf /etc/ssh/ssh_host_rsa_key.pub
 
+      - run: cat ~/.ssh/known_hosts
+
       - name: Login to Azure
         run: az login -u ${{ secrets.AZURE_RM_USERNAME }} -p ${{ secrets.AZURE_RM_PASSWORD }}
 

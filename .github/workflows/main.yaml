@@ -95,7 +95,7 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Terraform Init
+      - name: Terraform Validate
         run: terraform validate
 
       - name: Terraform Plan
@@ -106,14 +106,14 @@ jobs:
 
       - name: Set Azure public IP address as GitHub Secret
         run: |
-          echo $(terraform output vm_public_ip_address)
-          echo $(terraform output vm_username)
-          echo "lg_vm ansible_host=$(terraform output vm_public_ip_address) ansible_user=$(terraform output vm_username)"
-          echo "lg_vm ansible_host=$(terraform output vm_public_ip_address) ansible_user=$(terraform output vm_username)" > ../ansible/inventory
+          echo $(terraform-bin output vm_public_ip_address)
+          echo $(terraform-bin output vm_username)
+          echo "lg_vm ansible_host=$(terraform-bin output vm_public_ip_address) ansible_user=$(terraform output vm_username)"
+          echo "lg_vm ansible_host=$(terraform-bin output vm_public_ip_address) ansible_user=$(terraform output vm_username)" > ../ansible/inventory
       #          ip=$(terraform output vm_public_ip_address | sed 's/"//g')
       #          username=$(terraform output vm_username | sed 's/"//g')
-      #          echo "AZURE_RM_PUBLIC_IP=$ip" >> $GITHUB_ENV
-      #          echo "AZURE_RM_USERNAME=$username" >> $GITHUB_ENV
+          echo "AZURE_RM_PUBLIC_IP=$(terraform-bin output vm_public_ip_address)" >> $GITHUB_ENV
+          echo "AZURE_RM_USERNAME=$(terraform-bin output vm_username)" >> $GITHUB_ENV
 
       - name: List files
         run: ls -la

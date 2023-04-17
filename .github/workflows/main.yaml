@@ -86,18 +86,18 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: ssh-keygen -lf /etc/ssh/ssh_host_rsa_key.pub
-
-      - run: mkdir -p ~/.ssh
-
-      - run : echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-
-      - run: touch ~/.ssh/known_hosts
-
-      - run: cat ~/.ssh/known_hosts
-
-      - name: List files
-        run: ls -la ~/.ssh
+#      - run: ssh-keygen -lf /etc/ssh/ssh_host_rsa_key.pub
+#
+#      - run: mkdir -p ~/.ssh
+#
+#      - run : echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+#
+#      - run: touch ~/.ssh/known_hosts
+#
+#      - run: cat ~/.ssh/known_hosts
+#
+#      - name: List files
+#        run: ls -la ~/.ssh
 
       - name: Login to Azure
         run: az login -u ${{ secrets.AZURE_RM_USERNAME }} -p ${{ secrets.AZURE_RM_PASSWORD }}
@@ -136,7 +136,7 @@ jobs:
       - name: Commit and push updated files
         uses: EndBug/add-and-commit@v9
         with:
-          add: './terraform/.terraform.lock.hcl ./terraform/terraform.tfstate ./terraform.tfstate.backup ./ansible/inventory'
+          add: './terraform/.terraform.lock.hcl ./terraform/terraform.tfstate ./terraform/terraform.tfstate.backup ./ansible/inventory'
           default_author: github_actions
           message: 'GitHub Actions - Update Terraform and Ansible files'
 
@@ -155,7 +155,13 @@ jobs:
         run: ls -la
         working-directory: ansible
 
+      - name: Test Ansible connection
+        run: ansible -i inventory -m ping
+        working-directory: ansible
+
       - name: Install Docker on VM
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: false
         run: ansible-playbook -i inventory playbook_install_docker.yaml
         working-directory: ansible
 

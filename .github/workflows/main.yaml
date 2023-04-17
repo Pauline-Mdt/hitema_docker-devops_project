@@ -86,19 +86,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-#      - run: ssh-keygen -lf /etc/ssh/ssh_host_rsa_key.pub
-#
-#      - run: mkdir -p ~/.ssh
-#
-#      - run : echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-#
-#      - run: touch ~/.ssh/known_hosts
-#
-#      - run: cat ~/.ssh/known_hosts
-#
-#      - name: List files
-#        run: ls -la ~/.ssh
-
       - name: Login to Azure
         run: az login -u ${{ secrets.AZURE_RM_USERNAME }} -p ${{ secrets.AZURE_RM_PASSWORD }}
 
@@ -186,13 +173,24 @@ jobs:
           sudo apt update
           sudo apt install -y ansible
 
-      - name: Set up Ansible inventory
+      - name: Save Ansible SSH key
         run: |
-          mkdir -p ./ansible/inventory
-          echo "[vm]" > ./ansible/inventory/hosts
-          echo "lg_vm ansible_host=${{ secrets.AZURE_RM_PUBLIC_IP }} ansible_user=${{ secrets.AZURE_RM_USERNAME }}" >> ./ansible/inventory/hosts
-
-      - name: Install Docker on VM
-        run: ansible-playbook -i inventory -u ${{ env.AZURE_RM_USERNAME }} playbook_install_docker.yaml
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ansible_key.pem
+          chmod 600 ansible_key.pem
         working-directory: ansible
 
+      - name: List files
+        run: ls -la
+        working-directory: ansible
+
+      - name: Test Ansible connection
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: false
+        run: ansible all -i inventory -m ping --private-key=./ansible_key.pem
+        working-directory: ansible
+
+      - name: Deploy project on VM
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: false
+        run: ansible-playbook -i inventory playbook_run_project.yaml --private-key=./ansible_key.pem
+        working-directory: ansible

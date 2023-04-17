@@ -59,21 +59,8 @@ resource "azurerm_subnet" "internal" {
   address_prefixes     = ["10.0.2.0/24"]
 }
 
-#resource "azurerm_network_interface" "main" {
-#  name                = "${var.prefix}-nic"
-#  location            = azurerm_resource_group.main.location
-#  resource_group_name = azurerm_resource_group.main.name
-#
-#  ip_configuration {
-#    name                          = "internal"
-#    subnet_id                     = azurerm_subnet.internal.id
-#    private_ip_address_allocation = "Dynamic"
-#    public_ip_address_id          = azurerm_public_ip.pip.id
-#  }
-#}
-
 resource "azurerm_network_interface" "main" {
-  name                = "${var.prefix}-nic"
+  name                = "${var.prefix}-nic1"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
 
@@ -101,6 +88,7 @@ resource "azurerm_network_security_group" "webserver" {
   name                = "tls_webserver"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
+
   security_rule {
     access                     = "Allow"
     direction                  = "Inbound"
@@ -146,13 +134,4 @@ resource "azurerm_linux_virtual_machine" "main" {
     sku       = "18.04-LTS"
     version   = "latest"
   }
-
-}
-
-output "vm_public_ip_address" {
-  value = azurerm_public_ip.pip.ip_address
-}
-
-output "vm_username" {
-  value = azurerm_linux_virtual_machine.main.admin_username
 }

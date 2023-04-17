@@ -97,14 +97,9 @@ resource "azurerm_network_security_group" "webserver" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     source_address_prefix      = "*"
+    destination_address_prefix = "*"
     destination_port_range     = "8000"
-    destination_address_prefix = azurerm_network_interface.main.private_ip_address
   }
-}
-
-resource "azurerm_network_interface_security_group_association" "main" {
-  network_interface_id      = azurerm_network_interface.internal.id
-  network_security_group_id = azurerm_network_security_group.webserver.id
 }
 
 resource "azurerm_linux_virtual_machine" "main" {

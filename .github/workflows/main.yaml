@@ -156,13 +156,15 @@ jobs:
         working-directory: ansible
 
       - name: Test Ansible connection
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: false
         run: ansible all -i inventory -m ping --private-key=./ansible_key.pem
         working-directory: ansible
 
       - name: Install Docker on VM
         env:
           ANSIBLE_HOST_KEY_CHECKING: false
-        run: ansible-playbook -i inventory playbook_install_docker.yaml
+        run: ansible-playbook -i inventory playbook_install_docker.yaml --private-key=./ansible_key.pem
         working-directory: ansible
 
   deploy:

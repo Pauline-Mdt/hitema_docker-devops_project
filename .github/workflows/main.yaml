@@ -156,7 +156,7 @@ jobs:
         working-directory: ansible
 
       - name: Test Ansible connection
-        run: ansible -i inventory -m ping
+        run: ansible all -i inventory -m ping
         working-directory: ansible
 
       - name: Install Docker on VM

@@ -20,4 +20,4 @@
     - name: Build and run docker compose
       shell: |
         cd /home/adminuser/app
-        docker compose up --detach
+        docker-compose up > logs.txt &

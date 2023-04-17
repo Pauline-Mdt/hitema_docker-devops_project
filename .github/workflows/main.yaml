@@ -164,6 +164,10 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ansible
+
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -177,20 +181,16 @@ jobs:
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ansible_key.pem
           chmod 600 ansible_key.pem
-        working-directory: ansible
 
       - name: List files
         run: ls -la
-        working-directory: ansible
 
       - name: Test Ansible connection
         env:
           ANSIBLE_HOST_KEY_CHECKING: false
         run: ansible all -i inventory -m ping --private-key=./ansible_key.pem
-        working-directory: ansible
 
       - name: Deploy project on VM
         env:
           ANSIBLE_HOST_KEY_CHECKING: false
         run: ansible-playbook -i inventory playbook_run_project.yaml --private-key=./ansible_key.pem
-        working-directory: ansible

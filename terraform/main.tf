@@ -59,8 +59,21 @@ resource "azurerm_subnet" "internal" {
   address_prefixes     = ["10.0.2.0/24"]
 }
 
+resource "azurerm_network_interface" "old" {
+  name                = "${var.prefix}-nic"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.internal.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.pip.id
+  }
+}
+
 resource "azurerm_network_interface" "main" {
-  name                = "${var.prefix}-nic2"
+  name                = "${var.prefix}-nic1"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
 

@@ -13,5 +13,5 @@
 
     - name: Install Docker Compose
       apt:
-        name: docker-compose-plugin
+        name: docker-compose
         state: present

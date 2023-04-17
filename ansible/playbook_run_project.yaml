@@ -17,7 +17,7 @@
         repo: https://github.com/Pauline-Mdt/hitema_docker-devops_project
         dest: /home/adminuser/app
 
-    - name: Build and run docker-compose
+    - name: Build and run docker compose
       shell: |
         cd /home/adminuser/app
-        docker-compose up -d
+        docker compose up -d
